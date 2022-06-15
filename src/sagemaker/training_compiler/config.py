@@ -14,6 +14,8 @@
 from __future__ import absolute_import
 import logging
 
+from sagemaker.workflow import is_pipeline_variable
+
 logger = logging.getLogger(__name__)
 
 
@@ -145,6 +147,9 @@ class TrainingCompilerConfig(object):
             ValueError: Raised if the requested configuration is not compatible
                         with SageMaker Training Compiler.
         """
+        if is_pipeline_variable(instance_type) or is_pipeline_variable(image_uri):
+            # skip the validation if either instance type or image uri is a pipeline variable
+            return
 
         if "local" not in instance_type:
             requested_instance_class = instance_type.split(".")[1]  # Expecting ml.class.size

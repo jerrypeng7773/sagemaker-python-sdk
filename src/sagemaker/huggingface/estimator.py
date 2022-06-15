@@ -13,6 +13,8 @@
 """Placeholder docstring"""
 from __future__ import absolute_import
 
+from typing import Optional, Union, Dict
+
 import logging
 import re
 
@@ -27,6 +29,7 @@ from sagemaker.huggingface.model import HuggingFaceModel
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
 
 from sagemaker.training_compiler.config import TrainingCompilerConfig
+from sagemaker.workflow.entities import PipelineVariable
 
 logger = logging.getLogger("sagemaker")
 
@@ -38,16 +41,16 @@ class HuggingFace(Framework):
 
     def __init__(
         self,
-        py_version,
-        entry_point,
-        transformers_version=None,
-        tensorflow_version=None,
-        pytorch_version=None,
-        source_dir=None,
-        hyperparameters=None,
-        image_uri=None,
-        distribution=None,
-        compiler_config=None,
+        py_version: str,
+        entry_point: str,
+        transformers_version: Optional[int] = None,
+        tensorflow_version: Optional[int] = None,
+        pytorch_version: Optional[int] = None,
+        source_dir: Optional[str] = None,
+        hyperparameters: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
+        image_uri: Optional[Union[str, PipelineVariable]] = None,
+        distribution: Dict = None,
+        compiler_config: TrainingCompilerConfig = None,
         **kwargs,
     ):
         """This estimator runs a Hugging Face training script in a SageMaker training environment.

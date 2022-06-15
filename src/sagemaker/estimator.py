@@ -18,7 +18,7 @@ import logging
 import os
 import uuid
 from abc import ABCMeta, abstractmethod
-from typing import Any, Dict
+from typing import Any, Dict, Union, Optional, List
 
 from six import string_types, with_metaclass
 from six.moves.urllib.parse import urlparse
@@ -53,6 +53,7 @@ from sagemaker.jumpstart.utils import (
     get_jumpstart_base_name_if_jumpstart_model,
     update_inference_tags_with_jumpstart_training_tags,
 )
+from sagemaker.debugger import RuleBase
 from sagemaker.local import LocalSession
 from sagemaker.model import (
     CONTAINER_LOG_LEVEL_PARAM_NAME,
@@ -75,6 +76,7 @@ from sagemaker.utils import (
     name_from_base,
 )
 from sagemaker.workflow import is_pipeline_variable
+from sagemaker.workflow.entities import PipelineVariable
 from sagemaker.workflow.pipeline_context import (
     PipelineSession,
     runnable_by_pipeline,
@@ -105,44 +107,44 @@ class EstimatorBase(with_metaclass(ABCMeta, object)):  # pylint: disable=too-man
 
     def __init__(
         self,
-        role,
-        instance_count=None,
-        instance_type=None,
-        volume_size=30,
-        volume_kms_key=None,
-        max_run=24 * 60 * 60,
-        input_mode="File",
-        output_path=None,
-        output_kms_key=None,
-        base_job_name=None,
-        sagemaker_session=None,
-        tags=None,
-        subnets=None,
-        security_group_ids=None,
-        model_uri=None,
-        model_channel_name="model",
-        metric_definitions=None,
-        encrypt_inter_container_traffic=False,
-        use_spot_instances=False,
-        max_wait=None,
-        checkpoint_s3_uri=None,
-        checkpoint_local_path=None,
-        rules=None,
-        debugger_hook_config=None,
-        tensorboard_output_config=None,
-        enable_sagemaker_metrics=None,
-        enable_network_isolation=False,
-        profiler_config=None,
-        disable_profiler=False,
-        environment=None,
-        max_retry_attempts=None,
-        source_dir=None,
-        git_config=None,
-        hyperparameters=None,
-        container_log_level=logging.INFO,
-        code_location=None,
-        entry_point=None,
-        dependencies=None,
+        role: str,
+        instance_count: Optional[Union[int, PipelineVariable]] = None,
+        instance_type: Optional[Union[str, PipelineVariable]] = None,
+        volume_size: Union[int, PipelineVariable] = 30,
+        volume_kms_key: Optional[Union[str, PipelineVariable]] = None,
+        max_run: Union[int, PipelineVariable] = 24 * 60 * 60,
+        input_mode: Union[str, PipelineVariable] = "File",
+        output_path: Optional[Union[str, PipelineVariable]] = None,
+        output_kms_key: Optional[Union[str, PipelineVariable]] = None,
+        base_job_name: Optional[str] = None,
+        sagemaker_session: Optional[Session] = None,
+        tags: Optional[List[Dict[str, Union[str, PipelineVariable]]]] = None,
+        subnets: Optional[List[Union[str, PipelineVariable]]] = None,
+        security_group_ids: Optional[List[Union[str, PipelineVariable]]] = None,
+        model_uri: Optional[str] = None,
+        model_channel_name: Union[str, PipelineVariable] = "model",
+        metric_definitions: Optional[List[Dict[str, Union[str, PipelineVariable]]]] = None,
+        encrypt_inter_container_traffic: Union[bool, PipelineVariable] = False,
+        use_spot_instances: Union[bool, PipelineVariable] = False,
+        max_wait: Union[int, PipelineVariable] = None,
+        checkpoint_s3_uri: Optional[Union[str, PipelineVariable]] = None,
+        checkpoint_local_path: Optional[Union[str, PipelineVariable]] = None,
+        rules: Optional[List[RuleBase]] = None,
+        debugger_hook_config: Optional[Union[bool, DebuggerHookConfig]] = None,
+        tensorboard_output_config: Optional[TensorBoardOutputConfig] = None,
+        enable_sagemaker_metrics: Optional[Union[bool, PipelineVariable]] = None,
+        enable_network_isolation: Union[bool, PipelineVariable] = False,
+        profiler_config: Optional[ProfilerConfig] = None,
+        disable_profiler: bool = False,
+        environment: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
+        max_retry_attempts: Optional[Union[int, PipelineVariable]] = None,
+        source_dir: Optional[str] = None,
+        git_config: Optional[Dict[str, str]] = None,
+        hyperparameters: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
+        container_log_level: Union[int, PipelineVariable] = logging.INFO,
+        code_location: Optional[str] = None,
+        entry_point: Optional[str] = None,
+        dependencies: Optional[List[Union[str]]] = None,
         **kwargs,
     ):
         """Initialize an ``EstimatorBase`` instance.
@@ -2730,10 +2732,19 @@ class Framework(EstimatorBase):
         # Disable debugger if checkpointing is enabled by the customer
         if self.checkpoint_s3_uri and self.checkpoint_local_path and self.debugger_hook_config:
             if self._framework_name in {"mxnet", "pytorch", "tensorflow"}:
-                if self.instance_count > 1 or (
-                    hasattr(self, "distribution")
-                    and self.distribution is not None  # pylint: disable=no-member
-                ):
+                disable_debugger_hook_config = False
+                if hasattr(self, "distribution") and self.distribution is not None:  # pylint: disable=no-member
+                    disable_debugger_hook_config = True
+                else:
+                    if is_pipeline_variable(self.instance_count):
+                        raise ValueError(
+                            "instance_count argument has to be an integer "
+                            + "rather than a pipeline variable"
+                        )
+                    elif self.instance_count > 1:
+                        disable_debugger_hook_config = True
+
+                if disable_debugger_hook_config:
                     logger.info(
                         "SMDebug Does Not Currently Support \
                         Distributed Training Jobs With Checkpointing Enabled"

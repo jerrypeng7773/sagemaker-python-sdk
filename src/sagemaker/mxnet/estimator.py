@@ -13,6 +13,8 @@
 """Placeholder docstring"""
 from __future__ import absolute_import
 
+from typing import Optional, Dict, Union
+
 import logging
 
 from packaging.version import Version
@@ -29,6 +31,7 @@ from sagemaker.fw_utils import (
 from sagemaker.mxnet import defaults
 from sagemaker.mxnet.model import MXNetModel
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
+from sagemaker.workflow.entities import PipelineVariable
 
 logger = logging.getLogger("sagemaker")
 
@@ -41,13 +44,13 @@ class MXNet(Framework):
 
     def __init__(
         self,
-        entry_point,
-        framework_version=None,
-        py_version=None,
-        source_dir=None,
-        hyperparameters=None,
-        image_uri=None,
-        distribution=None,
+        entry_point: str,
+        framework_version: Optional[str] = None,
+        py_version: Optional[str] = None,
+        source_dir: Optional[str] = None,
+        hyperparameters: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
+        image_uri: Optional[Union[str, PipelineVariable]] = None,
+        distribution: Optional[Dict[str, str]] = None,
         **kwargs
     ):
         """This ``Estimator`` executes an MXNet script in a managed MXNet execution environment.

@@ -56,6 +56,8 @@ from tests.unit import DATA_DIR
 
 from sagemaker.inputs import TrainingInput
 from tests.unit.sagemaker.workflow.helpers import CustomStep
+from sagemaker.workflow.condition_step import ConditionStep
+from sagemaker.workflow.conditions import ConditionGreaterThanOrEqualTo
 
 REGION = "us-west-2"
 BUCKET = "my-bucket"
@@ -219,29 +221,42 @@ def test_training_step_with_estimator(pipeline_session, training_input, hyperpar
         assert "Running within a PipelineSession" in str(w[-1].message)
 
     with warnings.catch_warnings(record=True) as w:
-        step = TrainingStep(
+        step_train = TrainingStep(
             name="MyTrainingStep",
             step_args=step_args,
             description="TrainingStep description",
             display_name="MyTrainingStep",
-            depends_on=["TestStep", "SecondTestStep"],
+            depends_on=["TestStep"],
         )
         assert len(w) == 0
 
+    step_condition = ConditionStep(
+        name="MyConditionStep",
+        conditions=[
+            ConditionGreaterThanOrEqualTo(
+                left=step_train.properties.FinalMetricDataList['val:acc'].Value,
+                right = 0.95
+            )
+        ],
+        if_steps=[custom_step2],
+    )
+
     pipeline = Pipeline(
         name="MyPipeline",
-        steps=[step, custom_step1, custom_step2],
+        steps=[step_train, step_condition, custom_step1, custom_step2],
         sagemaker_session=pipeline_session,
     )
+    assert step_condition.conditions[0].left.expr \
+           == {'Get': "Steps.MyTrainingStep.FinalMetricDataList['val:acc'].Value"}
     assert json.loads(pipeline.definition())["Steps"][0] == {
         "Name": "MyTrainingStep",
         "Description": "TrainingStep description",
         "DisplayName": "MyTrainingStep",
         "Type": "Training",
-        "DependsOn": ["TestStep", "SecondTestStep"],
+        "DependsOn": ["TestStep"],
         "Arguments": step_args.args,
     }
-    assert step.properties.TrainingJobName.expr == {"Get": "Steps.MyTrainingStep.TrainingJobName"}
+    assert step_train.properties.TrainingJobName.expr == {"Get": "Steps.MyTrainingStep.TrainingJobName"}
 
 
 @pytest.mark.parametrize("estimator", ESTIMATOR_LISTS)

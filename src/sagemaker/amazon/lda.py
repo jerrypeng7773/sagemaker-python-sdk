@@ -13,6 +13,8 @@
 """Placeholder docstring"""
 from __future__ import absolute_import
 
+from typing import Optional, Union
+
 from sagemaker import image_uris
 from sagemaker.amazon.amazon_estimator import AmazonAlgorithmEstimatorBase
 from sagemaker.amazon.common import RecordSerializer, RecordDeserializer
@@ -22,6 +24,7 @@ from sagemaker.predictor import Predictor
 from sagemaker.model import Model
 from sagemaker.session import Session
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
+from sagemaker.workflow.entities import PipelineVariable
 
 
 class LDA(AmazonAlgorithmEstimatorBase):
@@ -33,24 +36,24 @@ class LDA(AmazonAlgorithmEstimatorBase):
     word, and the categories are the topics.
     """
 
-    repo_name = "lda"
-    repo_version = 1
+    repo_name: str = "lda"
+    repo_version: int = 1
 
-    num_topics = hp("num_topics", gt(0), "An integer greater than zero", int)
-    alpha0 = hp("alpha0", gt(0), "A positive float", float)
-    max_restarts = hp("max_restarts", gt(0), "An integer greater than zero", int)
-    max_iterations = hp("max_iterations", gt(0), "An integer greater than zero", int)
-    tol = hp("tol", gt(0), "A positive float", float)
+    num_topics: hp = hp("num_topics", gt(0), "An integer greater than zero", int)
+    alpha0: hp = hp("alpha0", gt(0), "A positive float", float)
+    max_restarts: hp = hp("max_restarts", gt(0), "An integer greater than zero", int)
+    max_iterations: hp = hp("max_iterations", gt(0), "An integer greater than zero", int)
+    tol: hp = hp("tol", gt(0), "A positive float", float)
 
     def __init__(
         self,
-        role,
-        instance_type=None,
-        num_topics=None,
-        alpha0=None,
-        max_restarts=None,
-        max_iterations=None,
-        tol=None,
+        role: str,
+        instance_type: Optional[Union[str, PipelineVariable]] = None,
+        num_topics: Optional[int] = None,
+        alpha0: Optional[float] = None,
+        max_restarts: Optional[int] = None,
+        max_iterations: Optional[int] = None,
+        tol: Optional[float] = None,
         **kwargs
     ):
         """Latent Dirichlet Allocation (LDA) is :class:`Estimator` used for unsupervised learning.

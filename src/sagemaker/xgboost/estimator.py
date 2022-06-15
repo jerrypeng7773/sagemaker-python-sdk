@@ -13,6 +13,8 @@
 """Placeholder docstring"""
 from __future__ import absolute_import
 
+from typing import Optional, Union, Dict
+
 import logging
 
 from sagemaker import image_uris
@@ -29,6 +31,8 @@ from sagemaker.xgboost import defaults
 from sagemaker.xgboost.model import XGBoostModel
 from sagemaker.xgboost.utils import validate_py_version, validate_framework_version
 
+from sagemaker.workflow.entities import PipelineVariable
+
 logger = logging.getLogger("sagemaker")
 
 
@@ -42,13 +46,13 @@ class XGBoost(Framework):
 
     def __init__(
         self,
-        entry_point,
-        framework_version,
-        source_dir=None,
-        hyperparameters=None,
-        py_version="py3",
-        image_uri=None,
-        image_uri_region=None,
+        entry_point: str,
+        framework_version: str,
+        source_dir: Optional[str] = None,
+        hyperparameters: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
+        py_version: str = "py3",
+        image_uri: Optional[Union[str, PipelineVariable]] = None,
+        image_uri_region: Optional[str] = None,
         **kwargs
     ):
         """An estimator that executes an XGBoost-based SageMaker Training Job.

@@ -13,6 +13,8 @@
 """This module configures the SageMaker Clarify bias and model explainability processor job."""
 from __future__ import absolute_import, print_function
 
+from typing import Union, List, Optional, Dict, Any
+
 import copy
 import json
 import logging
@@ -22,7 +24,10 @@ import re
 import tempfile
 from abc import ABC, abstractmethod
 from sagemaker import image_uris, s3, utils
+from sagemaker.session import Session
+from sagemaker.network import NetworkConfig
 from sagemaker.processing import ProcessingInput, ProcessingOutput, Processor
+from sagemaker.workflow.entities import PipelineVariable
 
 logger = logging.getLogger(__name__)
 
@@ -643,19 +648,19 @@ class SageMakerClarifyProcessor(Processor):
 
     def __init__(
         self,
-        role,
-        instance_count,
-        instance_type,
-        volume_size_in_gb=30,
-        volume_kms_key=None,
-        output_kms_key=None,
-        max_runtime_in_seconds=None,
-        sagemaker_session=None,
-        env=None,
-        tags=None,
-        network_config=None,
-        job_name_prefix=None,
-        version=None,
+        role: str,
+        instance_count: Union[int, PipelineVariable],
+        instance_type: Union[str, PipelineVariable],
+        volume_size_in_gb: Union[int, PipelineVariable] = 30,
+        volume_kms_key: Optional[Union[str, PipelineVariable]] = None,
+        output_kms_key: Optional[Union[str, PipelineVariable]] = None,
+        max_runtime_in_seconds: Optional[Union[int, PipelineVariable]] = None,
+        sagemaker_session: Optional[Session] = None,
+        env: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
+        tags: Optional[List[Dict[str, Union[str, PipelineVariable]]]] = None,
+        network_config: Optional[NetworkConfig] = None,
+        job_name_prefix: Optional[str] = None,
+        version: Optional[str] = None,
     ):
         """Initializes a ``Processor`` instance, computing bias metrics and model explanations.
 
@@ -720,13 +725,13 @@ class SageMakerClarifyProcessor(Processor):
 
     def _run(
         self,
-        data_config,
-        analysis_config,
-        wait,
-        logs,
-        job_name,
-        kms_key,
-        experiment_config,
+        data_config: DataConfig,
+        analysis_config: Dict[str, Any],
+        wait: bool,
+        logs: bool,
+        job_name: str,
+        kms_key: str,
+        experiment_config: Dict[str, str],
     ):
         """Runs a ProcessingJob with the Sagemaker Clarify container and an analysis config.
 
@@ -801,14 +806,14 @@ class SageMakerClarifyProcessor(Processor):
 
     def run_pre_training_bias(
         self,
-        data_config,
-        data_bias_config,
-        methods="all",
-        wait=True,
-        logs=True,
-        job_name=None,
-        kms_key=None,
-        experiment_config=None,
+        data_config: DataConfig,
+        data_bias_config: BiasConfig,
+        methods: str = "all",
+        wait: bool = True,
+        logs: bool = True,
+        job_name: str = None,
+        kms_key: str = None,
+        experiment_config: Dict[str, str] = None,
     ):
         """Runs a ProcessingJob to compute the pre-training bias methods of the input data.
 
@@ -869,16 +874,16 @@ class SageMakerClarifyProcessor(Processor):
 
     def run_post_training_bias(
         self,
-        data_config,
-        data_bias_config,
-        model_config,
-        model_predicted_label_config,
-        methods="all",
-        wait=True,
-        logs=True,
-        job_name=None,
-        kms_key=None,
-        experiment_config=None,
+        data_config: DataConfig,
+        data_bias_config: BiasConfig,
+        model_config: ModelConfig,
+        model_predicted_label_config: ModelPredictedLabelConfig,
+        methods: str = "all",
+        wait: bool = True,
+        logs: bool = True,
+        job_name: str = None,
+        kms_key: str = None,
+        experiment_config: Dict[str, str] = None,
     ):
         """Runs a ProcessingJob to compute the post-training bias methods of the model predictions.
 
@@ -955,17 +960,17 @@ class SageMakerClarifyProcessor(Processor):
 
     def run_bias(
         self,
-        data_config,
-        bias_config,
-        model_config,
-        model_predicted_label_config=None,
-        pre_training_methods="all",
-        post_training_methods="all",
-        wait=True,
-        logs=True,
-        job_name=None,
-        kms_key=None,
-        experiment_config=None,
+        data_config: DataConfig,
+        bias_config: BiasConfig,
+        model_config: ModelConfig,
+        model_predicted_label_config: ModelPredictedLabelConfig = None,
+        pre_training_methods: str = "all",
+        post_training_methods: str = "all",
+        wait: bool = True,
+        logs: bool = True,
+        job_name: str = None,
+        kms_key: str = None,
+        experiment_config: Dict[str, str] = None,
     ):
         """Runs a ProcessingJob to compute the requested bias methods.
 
@@ -1058,15 +1063,15 @@ class SageMakerClarifyProcessor(Processor):
 
     def run_explainability(
         self,
-        data_config,
-        model_config,
-        explainability_config,
-        model_scores=None,
-        wait=True,
-        logs=True,
-        job_name=None,
-        kms_key=None,
-        experiment_config=None,
+        data_config: DataConfig,
+        model_config: ModelConfig,
+        explainability_config: Union[ExplainabilityConfig, List],
+        model_scores: Union[int, ModelPredictedLabelConfig] = None,
+        wait: bool = True,
+        logs: bool = True,
+        job_name: str = None,
+        kms_key: str = None,
+        experiment_config: Dict[str, str] = None,
     ):
         """Runs a ProcessingJob computing for each example in the input the feature importance.
 

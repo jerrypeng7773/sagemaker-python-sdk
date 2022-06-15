@@ -13,6 +13,8 @@
 """Placeholder docstring"""
 from __future__ import absolute_import
 
+from typing import Optional, Union, List
+
 from sagemaker import image_uris
 from sagemaker.amazon.amazon_estimator import AmazonAlgorithmEstimatorBase
 from sagemaker.amazon.common import RecordSerializer, RecordDeserializer
@@ -22,6 +24,7 @@ from sagemaker.predictor import Predictor
 from sagemaker.model import Model
 from sagemaker.session import Session
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
+from sagemaker.workflow.entities import PipelineVariable
 
 
 class RandomCutForest(AmazonAlgorithmEstimatorBase):
@@ -32,30 +35,30 @@ class RandomCutForest(AmazonAlgorithmEstimatorBase):
     or unclassifiable data points.
     """
 
-    repo_name = "randomcutforest"
-    repo_version = 1
-    MINI_BATCH_SIZE = 1000
+    repo_name: str = "randomcutforest"
+    repo_version: int = 1
+    MINI_BATCH_SIZE: int = 1000
 
-    eval_metrics = hp(
+    eval_metrics: hp = hp(
         name="eval_metrics",
         validation_message='A comma separated list of "accuracy" or "precision_recall_fscore"',
         data_type=list,
     )
 
-    num_trees = hp("num_trees", (ge(50), le(1000)), "An integer in [50, 1000]", int)
-    num_samples_per_tree = hp(
+    num_trees: hp = hp("num_trees", (ge(50), le(1000)), "An integer in [50, 1000]", int)
+    num_samples_per_tree: hp = hp(
         "num_samples_per_tree", (ge(1), le(2048)), "An integer in [1, 2048]", int
     )
-    feature_dim = hp("feature_dim", (ge(1), le(10000)), "An integer in [1, 10000]", int)
+    feature_dim: hp = hp("feature_dim", (ge(1), le(10000)), "An integer in [1, 10000]", int)
 
     def __init__(
         self,
-        role,
-        instance_count=None,
-        instance_type=None,
-        num_samples_per_tree=None,
-        num_trees=None,
-        eval_metrics=None,
+        role: str,
+        instance_count: Optional[Union[int, PipelineVariable]] = None,
+        instance_type: Optional[Union[str, PipelineVariable]] = None,
+        num_samples_per_tree: Optional[int] = None,
+        num_trees: Optional[int] = None,
+        eval_metrics: Optional[List] = None,
         **kwargs
     ):
         """An `Estimator` class implementing a Random Cut Forest.
