@@ -1881,7 +1881,9 @@ class _TrainingJob(_Job):
             train_args["retry_strategy"] = None
 
         if estimator.encrypt_inter_container_traffic:
-            train_args["encrypt_inter_container_traffic"] = estimator.encrypt_inter_container_traffic
+            train_args[
+                "encrypt_inter_container_traffic"
+            ] = estimator.encrypt_inter_container_traffic
 
         if isinstance(estimator, sagemaker.algorithm.AlgorithmEstimator):
             train_args["algorithm_arn"] = estimator.algorithm_arn
@@ -2733,7 +2735,9 @@ class Framework(EstimatorBase):
         if self.checkpoint_s3_uri and self.checkpoint_local_path and self.debugger_hook_config:
             if self._framework_name in {"mxnet", "pytorch", "tensorflow"}:
                 disable_debugger_hook_config = False
-                if hasattr(self, "distribution") and self.distribution is not None:  # pylint: disable=no-member
+                if (
+                    hasattr(self, "distribution") and self.distribution is not None
+                ):  # pylint: disable=no-member
                     disable_debugger_hook_config = True
                 else:
                     if is_pipeline_variable(self.instance_count):

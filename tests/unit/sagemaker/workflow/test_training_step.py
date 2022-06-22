@@ -234,8 +234,7 @@ def test_training_step_with_estimator(pipeline_session, training_input, hyperpar
         name="MyConditionStep",
         conditions=[
             ConditionGreaterThanOrEqualTo(
-                left=step_train.properties.FinalMetricDataList['val:acc'].Value,
-                right = 0.95
+                left=step_train.properties.FinalMetricDataList["val:acc"].Value, right=0.95
             )
         ],
         if_steps=[custom_step2],
@@ -246,8 +245,9 @@ def test_training_step_with_estimator(pipeline_session, training_input, hyperpar
         steps=[step_train, step_condition, custom_step1, custom_step2],
         sagemaker_session=pipeline_session,
     )
-    assert step_condition.conditions[0].left.expr \
-           == {'Get': "Steps.MyTrainingStep.FinalMetricDataList['val:acc'].Value"}
+    assert step_condition.conditions[0].left.expr == {
+        "Get": "Steps.MyTrainingStep.FinalMetricDataList['val:acc'].Value"
+    }
     assert json.loads(pipeline.definition())["Steps"][0] == {
         "Name": "MyTrainingStep",
         "Description": "TrainingStep description",
@@ -256,7 +256,9 @@ def test_training_step_with_estimator(pipeline_session, training_input, hyperpar
         "DependsOn": ["TestStep"],
         "Arguments": step_args.args,
     }
-    assert step_train.properties.TrainingJobName.expr == {"Get": "Steps.MyTrainingStep.TrainingJobName"}
+    assert step_train.properties.TrainingJobName.expr == {
+        "Get": "Steps.MyTrainingStep.TrainingJobName"
+    }
 
 
 @pytest.mark.parametrize("estimator", ESTIMATOR_LISTS)
@@ -279,6 +281,7 @@ def test_training_step_with_framework_estimator(
 
     from sagemaker.workflow.retry import SageMakerJobStepRetryPolicy, SageMakerJobExceptionTypeEnum
     from sagemaker.workflow.parameters import ParameterInteger
+
     step = TrainingStep(
         name="MyTrainingStep",
         step_args=step_args,

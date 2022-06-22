@@ -69,7 +69,7 @@ def generate_mock_pipeline_session():
                     "Name": "MyKey",
                     "Type": "FreeText",
                 }
-            ]
+            ],
         },
         "AlgorithmName": "algo-name",
     }
@@ -213,7 +213,7 @@ FIXED_ARGUMENTS = dict(
             s3_data_input_path=ParameterString(name="clarify_processor_input"),
             s3_output_path=ParameterString(name="clarify_processor_output"),
             s3_analysis_config_output_path="s3://analysis_config_output_path",
-        )
+        ),
     ),
     estimator=dict(
         image_uri_region="us-west-2",
@@ -352,8 +352,8 @@ BASE_CLASS_PARAMS_EXCLUDED_IN_SUB_CLASS = dict(
         SKLearn={
             "instance_count",
             "instance_type",
-        }
-    )
+        },
+    ),
 )
 # A dict to keep the optional arguments which should not be None according to the logic
 # E.g. model_channel_name should not be None if model_uri is presented
@@ -402,4 +402,3 @@ MUTUAL_EXCLUDED_PARAMS = dict(
         ),
     )
 )
-

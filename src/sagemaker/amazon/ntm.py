@@ -58,9 +58,15 @@ class NTM(AmazonAlgorithmEstimatorBase):
         str,
     )
     tolerance: hp = hp("tolerance", (ge(1e-6), le(0.1)), "A float in [1e-6, 0.1]", float)
-    num_patience_epochs: hp = hp("num_patience_epochs", (ge(1), le(10)), "An integer in [1, 10]", int)
-    batch_norm: hp = hp(name="batch_norm", validation_message="Value must be a boolean", data_type=bool)
-    rescale_gradient: hp = hp("rescale_gradient", (ge(1e-3), le(1.0)), "A float in [1e-3, 1.0]", float)
+    num_patience_epochs: hp = hp(
+        "num_patience_epochs", (ge(1), le(10)), "An integer in [1, 10]", int
+    )
+    batch_norm: hp = hp(
+        name="batch_norm", validation_message="Value must be a boolean", data_type=bool
+    )
+    rescale_gradient: hp = hp(
+        "rescale_gradient", (ge(1e-3), le(1.0)), "A float in [1e-3, 1.0]", float
+    )
     clip_gradient: hp = hp("clip_gradient", ge(1e-3), "A float greater equal to 1e-3", float)
     weight_decay: hp = hp("weight_decay", (ge(0.0), le(1.0)), "A float in [0.0, 1.0]", float)
     learning_rate: hp = hp("learning_rate", (ge(1e-6), le(1.0)), "A float in [1e-6, 1.0]", float)
@@ -76,12 +82,12 @@ class NTM(AmazonAlgorithmEstimatorBase):
         encoder_layers_activation: Optional[str] = None,
         optimizer: Optional[str] = None,
         tolerance: Optional[float] = None,
-        num_patience_epochs: Optional[int] =None,
+        num_patience_epochs: Optional[int] = None,
         batch_norm: Optional[bool] = None,
         rescale_gradient: Optional[float] = None,
         clip_gradient: Optional[float] = None,
         weight_decay: Optional[float] = None,
-        learning_rate: Optional[float] =None,
+        learning_rate: Optional[float] = None,
         **kwargs
     ):
         """Neural Topic Model (NTM) is :class:`Estimator` used for unsupervised learning.

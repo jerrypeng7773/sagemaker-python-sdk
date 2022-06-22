@@ -201,7 +201,10 @@ class AlgorithmEstimator(EstimatorBase):
 
         # Check that the training instance type is compatible with the algorithm.
         supported_instances = train_spec["SupportedTrainingInstanceTypes"]
-        if not is_pipeline_variable(self.instance_type) and self.instance_type not in supported_instances:
+        if (
+            not is_pipeline_variable(self.instance_type)
+            and self.instance_type not in supported_instances
+        ):
             raise ValueError(
                 "Invalid instance_type: %s. %s supports the following instance types: %s"
                 % (self.instance_type, algorithm_name, supported_instances)
@@ -421,11 +424,12 @@ class AlgorithmEstimator(EstimatorBase):
 
         super(AlgorithmEstimator, self)._prepare_for_training(job_name)
 
-    def fit(self,
-            inputs: Optional[Union[str, Dict, TrainingInput, FileSystemInput]] = None,
-            wait: bool = True,
-            logs: bool = True,
-            job_name: Optional[str] = None,
+    def fit(
+        self,
+        inputs: Optional[Union[str, Dict, TrainingInput, FileSystemInput]] = None,
+        wait: bool = True,
+        logs: bool = True,
+        job_name: Optional[str] = None,
     ):
         """Placeholder docstring"""
         if inputs:

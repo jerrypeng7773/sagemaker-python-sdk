@@ -39,7 +39,9 @@ class PCA(AmazonAlgorithmEstimatorBase):
 
     DEFAULT_MINI_BATCH_SIZE: int = 500
 
-    num_components: hp = hp("num_components", gt(0), "Value must be an integer greater than zero", int)
+    num_components: hp = hp(
+        "num_components", gt(0), "Value must be an integer greater than zero", int
+    )
     algorithm_mode: hp = hp(
         "algorithm_mode",
         isin("regular", "randomized"),
@@ -62,7 +64,7 @@ class PCA(AmazonAlgorithmEstimatorBase):
         instance_type: Optional[Union[str, PipelineVariable]] = None,
         num_components: Optional[int] = None,
         algorithm_mode: Optional[str] = None,
-        subtract_mean:  Optional[bool] = None,
+        subtract_mean: Optional[bool] = None,
         extra_components: Optional[int] = None,
         **kwargs
     ):

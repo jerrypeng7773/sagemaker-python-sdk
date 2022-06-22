@@ -388,7 +388,7 @@ class PipelineVarCompatiTestTemplate:
                     assert json.dumps({"Get": "Parameters.debugger_hook_s3_output"}) in step_dsl
                 if param_with_none != "profiler_config":
                     assert (
-                            json.dumps({"Get": "Parameters.profile_config_system_monitor"}) in step_dsl
+                        json.dumps({"Get": "Parameters.profile_config_system_monitor"}) in step_dsl
                     )
                 if param_with_none != "tensorboard_output_config":
                     assert json.dumps({"Get": "Parameters.tensorboard_s3_output"}) in step_dsl

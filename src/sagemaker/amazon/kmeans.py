@@ -40,7 +40,9 @@ class KMeans(AmazonAlgorithmEstimatorBase):
     repo_version: str = 1
 
     k: hp = hp("k", gt(1), "An integer greater-than 1", int)
-    init_method: hp = hp("init_method", isin("random", "kmeans++"), 'One of "random", "kmeans++"', str)
+    init_method: hp = hp(
+        "init_method", isin("random", "kmeans++"), 'One of "random", "kmeans++"', str
+    )
     max_iterations: hp = hp("local_lloyd_max_iter", gt(0), "An integer greater-than 0", int)
     tol: hp = hp("local_lloyd_tol", (ge(0), le(1)), "An float in [0, 1]", float)
     num_trials: hp = hp("local_lloyd_num_trials", gt(0), "An integer greater-than 0", int)

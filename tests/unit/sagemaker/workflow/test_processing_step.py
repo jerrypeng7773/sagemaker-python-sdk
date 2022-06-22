@@ -435,8 +435,8 @@ def test_processing_step_with_framework_processor(
         == processing_output.destination
     )
 
-    del step_args['AppSpecification']['ContainerEntrypoint']
-    del step_def['Arguments']['AppSpecification']['ContainerEntrypoint']
+    del step_args["AppSpecification"]["ContainerEntrypoint"]
+    del step_def["Arguments"]["AppSpecification"]["ContainerEntrypoint"]
 
     del step_args["ProcessingInputs"][0]["S3Input"]["S3Uri"]
     del step_def["Arguments"]["ProcessingInputs"][0]["S3Input"]["S3Uri"]

@@ -71,8 +71,12 @@ class LinearLearner(AmazonAlgorithmEstimatorBase):
     )
     use_bias: hp = hp("use_bias", (), "Either True or False", bool)
     num_models: hp = hp("num_models", gt(0), "An integer greater-than 0", int)
-    num_calibration_samples: hp = hp("num_calibration_samples", gt(0), "An integer greater-than 0", int)
-    init_method: hp = hp("init_method", isin("uniform", "normal"), 'One of "uniform" or "normal"', str)
+    num_calibration_samples: hp = hp(
+        "num_calibration_samples", gt(0), "An integer greater-than 0", int
+    )
+    init_method: hp = hp(
+        "init_method", isin("uniform", "normal"), 'One of "uniform" or "normal"', str
+    )
     init_scale: hp = hp("init_scale", gt(0), "A float greater-than 0", float)
     init_sigma: hp = hp("init_sigma", gt(0), "A float greater-than 0", float)
     init_bias: hp = hp("init_bias", (), "A number", float)
@@ -111,7 +115,9 @@ class LinearLearner(AmazonAlgorithmEstimatorBase):
     use_lr_scheduler: hp = hp("use_lr_scheduler", (), "A boolean", bool)
     lr_scheduler_step: hp = hp("lr_scheduler_step", gt(0), "An integer greater-than 0", int)
     lr_scheduler_factor: hp = hp("lr_scheduler_factor", (gt(0), lt(1)), "A float in (0,1)", float)
-    lr_scheduler_minimum_lr: hp = hp("lr_scheduler_minimum_lr", gt(0), "A float greater-than 0", float)
+    lr_scheduler_minimum_lr: hp = hp(
+        "lr_scheduler_minimum_lr", gt(0), "A float greater-than 0", float
+    )
     normalize_data: hp = hp("normalize_data", (), "A boolean", bool)
     normalize_label: hp = hp("normalize_label", (), "A boolean", bool)
     unbias_data: hp = hp("unbias_data", (), "A boolean", bool)
@@ -121,12 +127,16 @@ class LinearLearner(AmazonAlgorithmEstimatorBase):
     quantile: hp = hp("quantile", (gt(0), lt(1)), "A float in (0,1)", float)
     loss_insensitivity: hp = hp("loss_insensitivity", gt(0), "A float greater-than 0", float)
     huber_delta: hp = hp("huber_delta", ge(0), "A float greater-than or equal to 0", float)
-    early_stopping_patience: hp = hp("early_stopping_patience", gt(0), "An integer greater-than 0", int)
+    early_stopping_patience: hp = hp(
+        "early_stopping_patience", gt(0), "An integer greater-than 0", int
+    )
     early_stopping_tolerance: hp = hp(
         "early_stopping_tolerance", gt(0), "A float greater-than 0", float
     )
     num_classes: hp = hp("num_classes", (gt(0), le(1000000)), "An integer in [1,1000000]", int)
-    accuracy_top_k: hp = hp("accuracy_top_k", (gt(0), le(1000000)), "An integer in [1,1000000]", int)
+    accuracy_top_k: hp = hp(
+        "accuracy_top_k", (gt(0), le(1000000)), "An integer in [1,1000000]", int
+    )
     f_beta: hp = hp("f_beta", gt(0), "A float greater-than 0", float)
     balance_multiclass_weights: hp = hp("balance_multiclass_weights", (), "A boolean", bool)
 

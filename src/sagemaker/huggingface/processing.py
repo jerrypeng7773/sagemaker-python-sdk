@@ -48,7 +48,7 @@ class HuggingFaceProcessor(FrameworkProcessor):
         output_kms_key: Optional[Union[str, PipelineVariable]] = None,
         code_location: Optional[str] = None,
         max_runtime_in_seconds: Optional[Union[int, PipelineVariable]] = None,
-        base_job_name:  Optional[str] = None,
+        base_job_name: Optional[str] = None,
         sagemaker_session: Optional[Session] = None,
         env: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
         tags: Optional[List[Dict[str, Union[str, PipelineVariable]]]] = None,

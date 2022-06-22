@@ -19,7 +19,7 @@ from sagemaker.clarify import (
     BiasConfig,
     ModelConfig,
     ModelPredictedLabelConfig,
-    PDPConfig
+    PDPConfig,
 )
 from sagemaker.tensorflow.processing import TensorFlowProcessor
 from sagemaker.xgboost.processing import XGBoostProcessor

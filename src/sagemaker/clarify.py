@@ -361,7 +361,9 @@ class PDPConfig(ExplainabilityConfig):
     corresponding values will be included in the analysis output.
     """
 
-    def __init__(self, features: Optional[List] = None, grid_resolution: int = 15, top_k_features: int = 10):
+    def __init__(
+        self, features: Optional[List] = None, grid_resolution: int = 15, top_k_features: int = 10
+    ):
         """Initializes config for PDP.
 
         Args:
@@ -766,9 +768,14 @@ class SageMakerClarifyProcessor(Processor):
             with open(analysis_config_file, "w") as f:
                 json.dump(analysis_config, f)
 
-            if is_pipeline_variable(data_config.s3_data_input_path) and not data_config.s3_analysis_config_output_path:
-                raise ValueError("If s3_data_input_path for DataConfig is a pipeline variable, "
-                                 "s3_analysis_config_output_path must not be null")
+            if (
+                is_pipeline_variable(data_config.s3_data_input_path)
+                and not data_config.s3_analysis_config_output_path
+            ):
+                raise ValueError(
+                    "If s3_data_input_path for DataConfig is a pipeline variable, "
+                    "s3_analysis_config_output_path must not be null"
+                )
             s3_analysis_config_file = _upload_analysis_config(
                 analysis_config_file,
                 data_config.s3_analysis_config_output_path or data_config.s3_output_path,

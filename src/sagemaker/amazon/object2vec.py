@@ -25,6 +25,7 @@ from sagemaker.session import Session
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
 from sagemaker.workflow.entities import PipelineVariable
 
+
 def _list_check_subset(valid_super_list):
     """Provides a function to check validity of list subset.
 
@@ -65,7 +66,9 @@ class Object2Vec(AmazonAlgorithmEstimatorBase):
         "early_stopping_tolerance", (ge(1e-06), le(0.1)), "A float in [1e-06, 0.1]", float
     )
     dropout: hp = hp("dropout", (ge(0.0), le(1.0)), "A float in [0.0, 1.0]", float)
-    weight_decay: hp = hp("weight_decay", (ge(0.0), le(10000.0)), "A float in [0.0, 10000.0]", float)
+    weight_decay: hp = hp(
+        "weight_decay", (ge(0.0), le(10000.0)), "A float in [0.0, 10000.0]", float
+    )
     bucket_width: hp = hp("bucket_width", (ge(0), le(100)), "An integer in [0, 100]", int)
     num_classes: hp = hp("num_classes", (ge(2), le(30)), "An integer in [2, 30]", int)
     mlp_layers: hp = hp("mlp_layers", (ge(1), le(10)), "An integer in [1, 10]", int)
@@ -118,8 +121,12 @@ class Object2Vec(AmazonAlgorithmEstimatorBase):
         'One of "hcnn", "bilstm", "pooled_embedding", "enc0"',
         str,
     )
-    enc0_cnn_filter_width: hp = hp("enc0_cnn_filter_width", (ge(1), le(9)), "An integer in [1, 9]", int)
-    enc1_cnn_filter_width: hp = hp("enc1_cnn_filter_width", (ge(1), le(9)), "An integer in [1, 9]", int)
+    enc0_cnn_filter_width: hp = hp(
+        "enc0_cnn_filter_width", (ge(1), le(9)), "An integer in [1, 9]", int
+    )
+    enc1_cnn_filter_width: hp = hp(
+        "enc1_cnn_filter_width", (ge(1), le(9)), "An integer in [1, 9]", int
+    )
     enc0_max_seq_len: hp = hp("enc0_max_seq_len", (ge(1), le(5000)), "An integer in [1, 5000]", int)
     enc1_max_seq_len: hp = hp("enc1_max_seq_len", (ge(1), le(5000)), "An integer in [1, 5000]", int)
     enc0_token_embedding_dim: hp = hp(
@@ -128,8 +135,12 @@ class Object2Vec(AmazonAlgorithmEstimatorBase):
     enc1_token_embedding_dim: hp = hp(
         "enc1_token_embedding_dim", (ge(2), le(1000)), "An integer in [2, 1000]", int
     )
-    enc0_vocab_size: hp = hp("enc0_vocab_size", (ge(2), le(3000000)), "An integer in [2, 3000000]", int)
-    enc1_vocab_size: hp = hp("enc1_vocab_size", (ge(2), le(3000000)), "An integer in [2, 3000000]", int)
+    enc0_vocab_size: hp = hp(
+        "enc0_vocab_size", (ge(2), le(3000000)), "An integer in [2, 3000000]", int
+    )
+    enc1_vocab_size: hp = hp(
+        "enc1_vocab_size", (ge(2), le(3000000)), "An integer in [2, 3000000]", int
+    )
     enc0_layers: hp = hp("enc0_layers", (ge(1), le(4)), "An integer in [1, 4]", int)
     enc1_layers: hp = hp("enc1_layers", (ge(1), le(4)), "An integer in [1, 4]", int)
     enc0_freeze_pretrained_embedding: hp = hp(

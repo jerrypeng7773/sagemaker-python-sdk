@@ -120,8 +120,7 @@ class AmazonAlgorithmEstimatorBase(EstimatorBase):
         """Placeholder docstring"""
         if is_pipeline_variable(data_location):
             raise ValueError(
-                "data_location argument has to be an integer "
-                + "rather than a pipeline variable"
+                "data_location argument has to be an integer " + "rather than a pipeline variable"
             )
 
         if not data_location.startswith("s3://"):

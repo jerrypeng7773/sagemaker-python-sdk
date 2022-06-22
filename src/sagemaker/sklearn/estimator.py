@@ -158,7 +158,9 @@ class SKLearn(Framework):
         if image_uri is None:
 
             if is_pipeline_variable(instance_type):
-                raise ValueError("instance_type argument cannot be a pipeline variable when image_uri is not given.")
+                raise ValueError(
+                    "instance_type argument cannot be a pipeline variable when image_uri is not given."
+                )
 
             self.image_uri = image_uris.retrieve(
                 SKLearn._framework_name,
