@@ -14,9 +14,15 @@ from __future__ import absolute_import
 
 # from sagemaker.processing import FrameworkProcessor, ScriptProcessor, Processor
 # from sagemaker.pytorch.processing import PyTorchProcessor
-# from sagemaker.clarify import SageMakerClarifyProcessor
-# from sagemaker.tensorflow.processing import TensorFlowProcessor
-# from sagemaker.xgboost.processing import XGBoostProcessor
+from sagemaker.clarify import (
+    SageMakerClarifyProcessor,
+    BiasConfig,
+    ModelConfig,
+    ModelPredictedLabelConfig,
+    PDPConfig
+)
+from sagemaker.tensorflow.processing import TensorFlowProcessor
+from sagemaker.xgboost.processing import XGBoostProcessor
 from sagemaker.spark.processing import SparkJarProcessor, PySparkProcessor
 from sagemaker.mxnet.processing import MXNetProcessor
 from sagemaker.sklearn.processing import SKLearnProcessor
@@ -109,13 +115,42 @@ from tests.unit.sagemaker.workflow.test_mechanism import (
 
 
 # def test_sagemaker_clarify_processor():
+#     bias_config = BiasConfig(
+#         facet_values_or_threshold=0.6,
+#         facet_name="facet_name",
+#         label_values_or_threshold=0.6,
+#     )
+#     model_config = ModelConfig(
+#         model_name="my-model",
+#         instance_count=1,
+#         instance_type="ml.m5.xlarge",
+#     )
+#     model_pred_config = ModelPredictedLabelConfig(label="pred", probability_threshold=0.6)
+#
 #     default_args = dict(
 #         clazz_args=dict(
 #             role=ROLE,
 #             sagemaker_session=PIPELINE_SESSION,
 #         ),
 #         func_args=dict(
-#             code=DUMMY_S3_SCRIPT_PATH,
+#             run_pre_training_bias=dict(
+#                 data_bias_config=bias_config,
+#             ),
+#             run_post_training_bias=dict(
+#                 data_bias_config=bias_config,
+#                 model_config=model_config,
+#                 model_predicted_label_config=model_pred_config,
+#             ),
+#             run_bias=dict(
+#                 bias_config=bias_config,
+#                 model_config=model_config,
+#                 model_predicted_label_config=model_pred_config,
+#             ),
+#             run_explainability=dict(
+#                 model_config=model_config,
+#                 model_scores=ModelPredictedLabelConfig(label="pred", probability_threshold=0.6),
+#                 explainability_config=PDPConfig(features=["f1", "f2", "f3", "f4"]),
+#             ),
 #         ),
 #     )
 #     test_template = PipelineVarCompatiTestTemplate(
@@ -243,7 +278,10 @@ from tests.unit.sagemaker.workflow.test_mechanism import (
 #         clazz_args=dict(
 #             role=ROLE,
 #             sagemaker_session=PIPELINE_SESSION,
-#             pytorch_version=None,
+#             pytorch_version="1.8",
+#             transformers_version="4.6",
+#             tensorflow_version=None,
+#             # instance_type="ml.p3.xlarge",
 #         ),
 #         func_args=dict(
 #             code=DUMMY_S3_SCRIPT_PATH,

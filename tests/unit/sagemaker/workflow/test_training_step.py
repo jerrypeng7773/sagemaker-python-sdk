@@ -277,6 +277,8 @@ def test_training_step_with_framework_estimator(
     estimator.sagemaker_session = pipeline_session
     step_args = estimator.fit(inputs=TrainingInput(s3_data=training_input))
 
+    from sagemaker.workflow.retry import SageMakerJobStepRetryPolicy, SageMakerJobExceptionTypeEnum
+    from sagemaker.workflow.parameters import ParameterInteger
     step = TrainingStep(
         name="MyTrainingStep",
         step_args=step_args,

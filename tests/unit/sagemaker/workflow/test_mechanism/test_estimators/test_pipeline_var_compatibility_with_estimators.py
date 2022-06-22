@@ -74,7 +74,6 @@ from sagemaker.amazon.kmeans import KMeans
 # def test_lda_estimator_compatibility(
 #     pipeline_session,
 # ):
-#      # need fix
 #     default_args = dict(
 #         clazz_args=dict(
 #             instance_count=1,
@@ -204,7 +203,10 @@ from sagemaker.amazon.kmeans import KMeans
 # ):
 #     default_args = dict(
 #         clazz_args=dict(
-#             py_version="py3"
+#             py_version="py3",
+#             instance_count=1,
+#             instance_type="ml.m5.xlarge",
+#             framework_version="0.20.0",
 #         ),
 #         func_args=dict(),
 #     )
@@ -229,31 +231,31 @@ from sagemaker.amazon.kmeans import KMeans
 #     )
 #     test_template.check_compatibility()
 
-
-# def test_huggingface_estimator_compatibility(
-#     pipeline_session,
-# ):
-#     default_args = dict(
-#         clazz_args=dict(
-#             instance_type="ml.p3.2xlarge",
-#             transformers_version="4.6.1",
-#             tensorflow_version="2.4.1",
-#             compiler_config=TrainingCompilerConfig(),
-#         ),
-#         func_args=dict(),
-#     )
-#     test_template = PipelineVarCompatiTestTemplate(
-#         clazz=HuggingFace,
-#         default_args=default_args,
-#     )
-#     test_template.check_compatibility()
+#
+def test_huggingface_estimator_compatibility(
+    pipeline_session,
+):
+    default_args = dict(
+        clazz_args=dict(
+            instance_type="ml.p3.2xlarge",
+            transformers_version="4.6.1",
+            tensorflow_version="2.4.1",
+            compiler_config=None,
+        ),
+        func_args=dict(),
+    )
+    test_template = PipelineVarCompatiTestTemplate(
+        clazz=HuggingFace,
+        default_args=default_args,
+    )
+    test_template.check_compatibility()
 
 
 # def test_pytorch_estimator_compatibility(
 #     pipeline_session,
 # ):
 #     default_args = dict(
-#         clazz_args=dict(),
+#         clazz_args=dict(framework_version="1.8.0", py_version="py3"),
 #         func_args=dict(),
 #     )
 #     test_template = PipelineVarCompatiTestTemplate(
@@ -276,11 +278,15 @@ from sagemaker.amazon.kmeans import KMeans
 #     )
 #     test_template.check_compatibility()
 
+
 # def test_knn_estimator_compatibility(
 #     pipeline_session,
 # ):
 #     default_args = dict(
-#         clazz_args=dict(),
+#         clazz_args=dict(
+#             dimension_reduction_target=6,
+#             dimension_reduction_type="sign",
+#         ),
 #         func_args=dict(),
 #     )
 #     test_template = PipelineVarCompatiTestTemplate(
@@ -289,24 +295,24 @@ from sagemaker.amazon.kmeans import KMeans
 #     )
 #     test_template.check_compatibility()
 
-def test_chainer_estimator_compatibility(
-    pipeline_session,
-):
-    default_args = dict(
-        clazz_args=dict(),
-        func_args=dict(),
-    )
-    test_template = PipelineVarCompatiTestTemplate(
-        clazz=Chainer,
-        default_args=default_args,
-    )
-    test_template.check_compatibility()
+# def test_chainer_estimator_compatibility(
+#     pipeline_session,
+# ):
+#     default_args = dict(
+#         clazz_args=dict(framework_version="4.0"),
+#         func_args=dict(),
+#     )
+#     test_template = PipelineVarCompatiTestTemplate(
+#         clazz=Chainer,
+#         default_args=default_args,
+#     )
+#     test_template.check_compatibility()
 
 # def test_ll_estimator_compatibility(
 #     pipeline_session,
 # ):
 #     default_args = dict(
-#         clazz_args=dict(),
+#         clazz_args=dict(init_method="normal", mini_batch_size=128),
 #         func_args=dict(),
 #     )
 #     test_template = PipelineVarCompatiTestTemplate(
@@ -314,6 +320,7 @@ def test_chainer_estimator_compatibility(
 #         default_args=default_args,
 #     )
 #     test_template.check_compatibility()
+
 
 
 

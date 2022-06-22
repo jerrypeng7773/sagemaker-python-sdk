@@ -1873,7 +1873,7 @@ class _TrainingJob(_Job):
                 train_args["input_mode"] = inputs.config["InputMode"]
 
         if estimator.enable_network_isolation():
-            train_args["enable_network_isolation"] = True
+            train_args["enable_network_isolation"] = estimator.enable_network_isolation()
 
         if estimator.max_retry_attempts is not None:
             train_args["retry_strategy"] = {"MaximumRetryAttempts": estimator.max_retry_attempts}
@@ -1881,7 +1881,7 @@ class _TrainingJob(_Job):
             train_args["retry_strategy"] = None
 
         if estimator.encrypt_inter_container_traffic:
-            train_args["encrypt_inter_container_traffic"] = True
+            train_args["encrypt_inter_container_traffic"] = estimator.encrypt_inter_container_traffic
 
         if isinstance(estimator, sagemaker.algorithm.AlgorithmEstimator):
             train_args["algorithm_arn"] = estimator.algorithm_arn

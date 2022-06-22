@@ -49,8 +49,8 @@ class HuggingFace(Framework):
         source_dir: Optional[str] = None,
         hyperparameters: Optional[Dict[str, Union[str, PipelineVariable]]] = None,
         image_uri: Optional[Union[str, PipelineVariable]] = None,
-        distribution: Dict = None,
-        compiler_config: TrainingCompilerConfig = None,
+        distribution: Optional[Dict] = None,
+        compiler_config: Optional[TrainingCompilerConfig] = None,
         **kwargs,
     ):
         """This estimator runs a Hugging Face training script in a SageMaker training environment.
@@ -201,12 +201,12 @@ class HuggingFace(Framework):
                     f"Instead got {type(compiler_config)}"
                 )
                 raise ValueError(error_string)
-            if compiler_config:
-                compiler_config.validate(
-                    image_uri=image_uri,
-                    instance_type=instance_type,
-                    distribution=distribution,
-                )
+            # if compiler_config:
+            compiler_config.validate(
+                image_uri=image_uri,
+                instance_type=instance_type,
+                distribution=distribution,
+            )
 
         self.distribution = distribution or {}
         self.compiler_config = compiler_config

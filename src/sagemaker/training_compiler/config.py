@@ -147,8 +147,18 @@ class TrainingCompilerConfig(object):
             ValueError: Raised if the requested configuration is not compatible
                         with SageMaker Training Compiler.
         """
-        if is_pipeline_variable(instance_type) or is_pipeline_variable(image_uri):
-            # skip the validation if either instance type or image uri is a pipeline variable
+        if image_uri:
+            error_helper_string = (
+                "Overriding the image URI is currently not supported "
+                "for SageMaker Training Compiler."
+                "Specify the following parameters to run the Hugging Face training job "
+                "with SageMaker Training Compiler enabled: "
+                "transformer_version, tensorflow_version or pytorch_version, and compiler_config."
+            )
+            raise ValueError(error_helper_string)
+
+        if is_pipeline_variable(instance_type):
+            # skip the validation if either instance type is a pipeline variable
             return
 
         if "local" not in instance_type:
@@ -170,16 +180,6 @@ class TrainingCompilerConfig(object):
             error_helper_string = (
                 "The local mode is not supported by SageMaker Training Compiler."
                 "It only supports the following GPU instances: p3, g4dn, and p4."
-            )
-            raise ValueError(error_helper_string)
-
-        if image_uri:
-            error_helper_string = (
-                "Overriding the image URI is currently not supported "
-                "for SageMaker Training Compiler."
-                "Specify the following parameters to run the Hugging Face training job "
-                "with SageMaker Training Compiler enabled: "
-                "transformer_version, tensorflow_version or pytorch_version, and compiler_config."
             )
             raise ValueError(error_helper_string)
 

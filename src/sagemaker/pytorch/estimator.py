@@ -44,7 +44,7 @@ class PyTorch(Framework):
 
     def __init__(
         self,
-        entry_point: Optional[str] = None,
+        entry_point: str,
         framework_version: Optional[str] = None,
         py_version: Optional[str] = None,
         source_dir: Optional[str] = None,

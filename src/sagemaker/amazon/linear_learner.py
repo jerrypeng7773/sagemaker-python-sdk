@@ -13,7 +13,7 @@
 """Placeholder docstring"""
 from __future__ import absolute_import
 
-from typing import Optional, Union, List
+from typing import Optional, Union
 
 from sagemaker import image_uris
 from sagemaker.amazon.amazon_estimator import AmazonAlgorithmEstimatorBase
@@ -25,6 +25,7 @@ from sagemaker.model import Model
 from sagemaker.session import Session
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
 from sagemaker.workflow.entities import PipelineVariable
+from sagemaker.workflow import is_pipeline_variable
 
 
 class LinearLearner(AmazonAlgorithmEstimatorBase):
@@ -423,10 +424,16 @@ class LinearLearner(AmazonAlgorithmEstimatorBase):
             num_records = records.num_records
 
         # mini_batch_size can't be greater than number of records or training job fails
-        default_mini_batch_size = min(
-            self.DEFAULT_MINI_BATCH_SIZE, max(1, int(num_records / self.instance_count))
-        )
-        mini_batch_size = mini_batch_size or default_mini_batch_size
+        if not mini_batch_size:
+            if is_pipeline_variable(self.instance_count):
+                raise ValueError(
+                    "instance_count can not be a pipeline variable when mini_batch_size is not given."
+                )
+            else:
+                mini_batch_size = min(
+                    self.DEFAULT_MINI_BATCH_SIZE, max(1, int(num_records / self.instance_count))
+                )
+
         super(LinearLearner, self)._prepare_for_training(
             records, mini_batch_size=mini_batch_size, job_name=job_name
         )

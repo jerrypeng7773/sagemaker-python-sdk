@@ -25,6 +25,7 @@ from sagemaker.model import Model
 from sagemaker.session import Session
 from sagemaker.vpc_utils import VPC_CONFIG_DEFAULT
 from sagemaker.workflow.entities import PipelineVariable
+from sagemaker.workflow import is_pipeline_variable
 
 
 class LDA(AmazonAlgorithmEstimatorBase):
@@ -123,7 +124,8 @@ class LDA(AmazonAlgorithmEstimatorBase):
             :class:`~sagemaker.estimator.EstimatorBase`.
         """
         # this algorithm only supports single instance training
-        if kwargs.pop("instance_count", 1) != 1:
+        instance_count = kwargs.pop("instance_count", 1)
+        if is_pipeline_variable(instance_count) or instance_count != 1:
             print(
                 "LDA only supports single instance training. Defaulting to 1 {}.".format(
                     instance_type

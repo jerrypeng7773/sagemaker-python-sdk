@@ -22,7 +22,7 @@ import os
 import pathlib
 import logging
 from textwrap import dedent
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 import attr
 
@@ -38,6 +38,8 @@ from sagemaker.workflow.pipeline_context import runnable_by_pipeline
 from sagemaker.dataset_definition.inputs import S3Input, DatasetDefinition
 from sagemaker.apiutils._base_types import ApiObject
 from sagemaker.s3 import S3Uploader
+from sagemaker.workflow.entities import PipelineVariable
+
 
 logger = logging.getLogger(__name__)
 
@@ -133,14 +135,14 @@ class Processor(object):
     @runnable_by_pipeline
     def run(
         self,
-        inputs=None,
-        outputs=None,
-        arguments=None,
-        wait=True,
-        logs=True,
-        job_name=None,
-        experiment_config=None,
-        kms_key=None,
+        inputs: Optional[List["ProcessingInput"]] = None,
+        outputs: Optional[List["ProcessingOutput"]] = None,
+        arguments: Optional[List[Union[str, PipelineVariable]]] = None,
+        wait: bool = True,
+        logs: bool = True,
+        job_name: Optional[str] = None,
+        experiment_config: Optional[Dict[str, str]] = None,
+        kms_key: Optional[str] = None,
     ):
         """Runs a processing job.
 
@@ -1484,18 +1486,18 @@ class FrameworkProcessor(ScriptProcessor):
 
     def run(  # type: ignore[override]
         self,
-        code,
-        source_dir=None,
-        dependencies=None,
-        git_config=None,
-        inputs=None,
-        outputs=None,
-        arguments=None,
-        wait=True,
-        logs=True,
-        job_name=None,
-        experiment_config=None,
-        kms_key=None,
+        code: str,
+        source_dir: Optional[str] = None,
+        dependencies: Optional[List[str]] = None,
+        git_config: Optional[Dict[str, str]] = None,
+        inputs: Optional[List["ProcessingInput"]] = None,
+        outputs: Optional[List["ProcessingOutput"]] = None,
+        arguments: Optional[List[Union[str, PipelineVariable]]] = None,
+        wait: bool = True,
+        logs: bool = True,
+        job_name: Optional[str] = None,
+        experiment_config: Optional[Dict[str, str]] = None,
+        kms_key: Optional[str] = None,
     ):
         """Runs a processing job.
 

@@ -130,12 +130,14 @@ class SKLearn(Framework):
         self.framework_version = framework_version
         self.py_version = py_version
 
+        if instance_type:
+            if is_pipeline_variable(instance_type):
+                raise ValueError("instance_count argument cannot be a pipeline variable")
         # SciKit-Learn does not support distributed training or training on GPU instance types.
         # Fail fast.
         _validate_not_gpu_instance_type(instance_type)
 
         if instance_count:
-
             if is_pipeline_variable(instance_count):
                 raise ValueError("instance_count argument cannot be a pipeline variable")
 

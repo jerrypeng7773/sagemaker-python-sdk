@@ -28,6 +28,7 @@ from sagemaker.session import Session
 from sagemaker.network import NetworkConfig
 from sagemaker.processing import ProcessingInput, ProcessingOutput, Processor
 from sagemaker.workflow.entities import PipelineVariable
+from sagemaker.workflow import is_pipeline_variable
 
 logger = logging.getLogger(__name__)
 
@@ -37,15 +38,15 @@ class DataConfig:
 
     def __init__(
         self,
-        s3_data_input_path,
-        s3_output_path,
-        s3_analysis_config_output_path=None,
-        label=None,
-        headers=None,
-        features=None,
-        dataset_type="text/csv",
-        s3_compression_type="None",
-        joinsource=None,
+        s3_data_input_path: Union[str, PipelineVariable],
+        s3_output_path: Union[str, PipelineVariable],
+        s3_analysis_config_output_path: Optional[str] = None,
+        label: Optional[str] = None,
+        headers: Optional[List[str]] = None,
+        features: Optional[List[str]] = None,
+        dataset_type: str = "text/csv",
+        s3_compression_type: str = "None",
+        joinsource: str = None,
     ):
         """Initializes a configuration of both input and output datasets.
 
@@ -105,10 +106,10 @@ class BiasConfig:
 
     def __init__(
         self,
-        label_values_or_threshold,
-        facet_name,
-        facet_values_or_threshold=None,
-        group_name=None,
+        label_values_or_threshold: Union[int, float, str],
+        facet_name: Union[str, int, List[str], List[int]],
+        facet_values_or_threshold: Optional[Union[int, float, str]] = None,
+        group_name: Optional[str] = None,
     ):
         """Initializes a configuration of the sensitive groups in the dataset.
 
@@ -181,15 +182,15 @@ class ModelConfig:
 
     def __init__(
         self,
-        model_name,
-        instance_count,
-        instance_type,
-        accept_type=None,
-        content_type=None,
-        content_template=None,
-        custom_attributes=None,
-        accelerator_type=None,
-        endpoint_name_prefix=None,
+        model_name: str,
+        instance_count: int,
+        instance_type: str,
+        accept_type: Optional[str] = None,
+        content_type: Optional[str] = None,
+        content_template: Optional[str] = None,
+        custom_attributes: Optional[str] = None,
+        accelerator_type: Optional[str] = None,
+        endpoint_name_prefix: Optional[str] = None,
     ):
         r"""Initializes a configuration of a model and the endpoint to be created for it.
 
@@ -277,10 +278,10 @@ class ModelPredictedLabelConfig:
 
     def __init__(
         self,
-        label=None,
-        probability=None,
-        probability_threshold=None,
-        label_headers=None,
+        label: Optional[Union[str, int]] = None,
+        probability: Optional[Union[str, int]] = None,
+        probability_threshold: Optional[float] = None,
+        label_headers: Optional[List[str]] = None,
     ):
         """Initializes a model output config to extract the predicted label or predicted score(s).
 
@@ -360,7 +361,7 @@ class PDPConfig(ExplainabilityConfig):
     corresponding values will be included in the analysis output.
     """
 
-    def __init__(self, features=None, grid_resolution=15, top_k_features=10):
+    def __init__(self, features: Optional[List] = None, grid_resolution: int = 15, top_k_features: int = 10):
         """Initializes config for PDP.
 
         Args:
@@ -461,8 +462,8 @@ class TextConfig:
 
     def __init__(
         self,
-        granularity,
-        language,
+        granularity: str,
+        language: str,
     ):
         """Initializes a text configuration.
 
@@ -504,13 +505,13 @@ class ImageConfig:
 
     def __init__(
         self,
-        model_type,
-        num_segments=None,
-        feature_extraction_method=None,
-        segment_compactness=None,
-        max_objects=None,
-        iou_threshold=None,
-        context=None,
+        model_type: str,
+        num_segments: Optional[int] = None,
+        feature_extraction_method: Optional[str] = None,
+        segment_compactness: Optional[float] = None,
+        max_objects: Optional[int] = None,
+        iou_threshold: Optional[float] = None,
+        context: Optional[float] = None,
     ):
         """Initializes all configuration parameters needed for SHAP CV explainability
 
@@ -563,15 +564,15 @@ class SHAPConfig(ExplainabilityConfig):
 
     def __init__(
         self,
-        baseline=None,
-        num_samples=None,
-        agg_method=None,
-        use_logit=False,
-        save_local_shap_values=True,
-        seed=None,
-        num_clusters=None,
-        text_config=None,
-        image_config=None,
+        baseline: Optional[Union[str, List]] = None,
+        num_samples: Optional[int] = None,
+        agg_method: Optional[str] = None,
+        use_logit: Optional[bool] = None,
+        save_local_shap_values: Optional[bool] = None,
+        seed: Optional[int] = None,
+        num_clusters: Optional[int] = None,
+        text_config: Optional[TextConfig] = None,
+        image_config: Optional[ImageConfig] = None,
     ):
         """Initializes config for SHAP.
 
@@ -764,6 +765,10 @@ class SageMakerClarifyProcessor(Processor):
             analysis_config_file = os.path.join(tmpdirname, "analysis_config.json")
             with open(analysis_config_file, "w") as f:
                 json.dump(analysis_config, f)
+
+            if is_pipeline_variable(data_config.s3_data_input_path) and not data_config.s3_analysis_config_output_path:
+                raise ValueError("If s3_data_input_path for DataConfig is a pipeline variable, "
+                                 "s3_analysis_config_output_path must not be null")
             s3_analysis_config_file = _upload_analysis_config(
                 analysis_config_file,
                 data_config.s3_analysis_config_output_path or data_config.s3_output_path,
