@@ -157,7 +157,7 @@ class KNN(AmazonAlgorithmEstimatorBase):
         self.index_metric = index_metric
         self.faiss_index_ivf_nlists = faiss_index_ivf_nlists
         self.faiss_index_pq_m = faiss_index_pq_m
-        print("???dimension_reduction_type", dimension_reduction_type, "dimension_reduction_target", dimension_reduction_target)
+
         if dimension_reduction_type and not dimension_reduction_target:
             raise ValueError(
                 '"dimension_reduction_target" is required when "dimension_reduction_type" is set.'
